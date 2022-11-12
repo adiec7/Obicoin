@@ -1,6 +1,6 @@
 /**
-* Template Name: Shuffle - v4.7.0
-* Template URL: https://bootstrapmade.com/bootstrap-3-one-page-template-free-shuffle/
+* Template Name: Moderna - v4.10.1
+* Template URL: https://bootstrapmade.com/free-bootstrap-template-corporate-moderna/
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
@@ -41,31 +41,15 @@
   }
 
   /**
-   * Navbar links active state on scroll
-   */
-  let navbarlinks = select('#navbar .scrollto', true)
-  const navbarlinksActive = () => {
-    let position = window.scrollY + 200
-    navbarlinks.forEach(navbarlink => {
-      if (!navbarlink.hash) return
-      let section = select(navbarlink.hash)
-      if (!section) return
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        navbarlink.classList.add('active')
-      } else {
-        navbarlink.classList.remove('active')
-      }
-    })
-  }
-  window.addEventListener('load', navbarlinksActive)
-  onscroll(document, navbarlinksActive)
-
-  /**
    * Scrolls to an element with header offset
    */
   const scrollto = (el) => {
     let header = select('#header')
     let offset = header.offsetHeight
+
+    if (!header.classList.contains('header-scrolled')) {
+      offset -= 20
+    }
 
     let elementPos = select(el).offsetTop
     window.scrollTo({
@@ -75,36 +59,20 @@
   }
 
   /**
-   * Header fixed top on scroll
+   * Toggle .header-scrolled class to #header when page is scrolled
    */
   let selectHeader = select('#header')
   if (selectHeader) {
-    let headerOffset = selectHeader.offsetTop
-    let nextElement = selectHeader.nextElementSibling
-    const headerFixed = () => {
-      if ((headerOffset - window.scrollY) <= 0) {
-        selectHeader.classList.add('fixed-top')
-        nextElement.classList.add('scrolled-offset')
+    const headerScrolled = () => {
+      if (window.scrollY > 100) {
+        selectHeader.classList.add('header-scrolled')
       } else {
-        selectHeader.classList.remove('fixed-top')
-        nextElement.classList.remove('scrolled-offset')
+        selectHeader.classList.remove('header-scrolled')
       }
     }
-    window.addEventListener('load', headerFixed)
-    onscroll(document, headerFixed)
+    window.addEventListener('load', headerScrolled)
+    onscroll(document, headerScrolled)
   }
-
-  /**
-   * Hero carousel indicators
-   */
-  let heroCarouselIndicators = select("#hero-carousel-indicators")
-  let heroCarouselItems = select('#heroCarousel .carousel-item', true)
-
-  heroCarouselItems.forEach((item, index) => {
-    (index === 0) ?
-    heroCarouselIndicators.innerHTML += "<li data-bs-target='#heroCarousel' data-bs-slide-to='" + index + "' class='active'></li>":
-      heroCarouselIndicators.innerHTML += "<li data-bs-target='#heroCarousel' data-bs-slide-to='" + index + "'></li>"
-  });
 
   /**
    * Back to top button
@@ -160,17 +128,6 @@
   }, true)
 
   /**
-   * Scroll with ofset on page load with hash links in the url
-   */
-  window.addEventListener('load', () => {
-    if (window.location.hash) {
-      if (select(window.location.hash)) {
-        scrollto(window.location.hash)
-      }
-    }
-  });
-
-  /**
    * Skills animation
    */
   let skilsContent = select('.skills-content');
@@ -188,13 +145,30 @@
   }
 
   /**
+   * Testimonials slider
+   */
+  new Swiper('.testimonials-carousel', {
+    speed: 400,
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true
+    }
+  });
+
+  /**
    * Porfolio isotope and filter
    */
   window.addEventListener('load', () => {
     let portfolioContainer = select('.portfolio-container');
     if (portfolioContainer) {
       let portfolioIsotope = new Isotope(portfolioContainer, {
-        itemSelector: '.portfolio-item',
+        itemSelector: '.portfolio-wrap',
         layoutMode: 'fitRows'
       });
 
@@ -209,6 +183,9 @@
 
         portfolioIsotope.arrange({
           filter: this.getAttribute('data-filter')
+        });
+        portfolioIsotope.on('arrangeComplete', function() {
+          AOS.refresh()
         });
       }, true);
     }
@@ -225,7 +202,7 @@
   /**
    * Portfolio details slider
    */
-  new Swiper('.events-slider', {
+  new Swiper('.portfolio-details-slider', {
     speed: 400,
     autoplay: {
       delay: 5000,
@@ -237,5 +214,22 @@
       clickable: true
     }
   });
+
+  /**
+   * Animation on scroll
+   */
+  window.addEventListener('load', () => {
+    AOS.init({
+      duration: 1000,
+      easing: "ease-in-out",
+      once: true,
+      mirror: false
+    });
+  });
+
+  /**
+   * Initiate Pure Counter 
+   */
+  new PureCounter();
 
 })()
